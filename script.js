@@ -4,6 +4,16 @@ const displayTempo = document.querySelector('#timer');
 const banner = document.querySelector('.app__image');
 const titulo = document.querySelector('.app__title');
 
+//Música e Audio
+const musicaFocoInput = document.querySelector('#alternar-musica');
+const musica = new Audio('/sons/luna-rise-part-one.mp3');
+musica.loop = true;
+musica.volume = 0.3;
+const audioPlay = new Audio('/sons/play.wav');
+const audioPausa = new Audio('/sons/pause.mp3');
+const audioTempoFinalizado = new Audio('./sons/beep.mp3');
+
+
 //Botões de Seleção da Atividade
 const focoBt = document.querySelector('.app__card-button--foco');
 const curtoBt = document.querySelector('.app__card-button--curto');
@@ -12,13 +22,25 @@ const botoes = document.querySelectorAll('.app__card-button');
 
 //Botão do Timer
 const iniciarBt = document.querySelector('.app__card-primary-button');
+const startPauseBt = document.querySelector('#start-pause');
+
 
 
 //Valores do Timer
-const duracaoFoco = 1500; 
-const duracaoDescansoCurto = 300; 
-const duracaoDescansoLongo = 900; 
+const duracaoFoco = 1500000; 
+const duracaoDescansoCurto = 300000; 
+const duracaoDescansoLongo = 900000;
+let intervaloId = null
 
+
+
+musicaFocoInput.addEventListener('change', () => {
+    if(musica.paused) {
+        musica.play()
+    } else {
+        musica.pause()
+    }
+});
 
 
 focoBt.addEventListener('click', () => {
@@ -69,3 +91,37 @@ function alterarContexto(contexto) {
             break;
     }
 }
+
+const contagemRegressiva = () => {
+    if(tempoDecorridoEmSegundos <= 0) {
+        audioTempoFinalizado.play()  
+        alert('Tempo finalizado')
+        zerar()
+        return
+    }
+    tempoDecorridoEmSegundos -= 1
+    console.log('Tempo: ' + tempoDecorridoEmSegundos)
+    console.log('Id: ' + intervaloId)
+};
+
+startPauseBt.addEventListener('click', iniciarOuPausar);
+
+function iniciarOuPausar() {
+    if (intervaloId) {
+        audioPausa.play();  
+        zerar()
+        return // early return -- circuit breaker
+    }
+    audioPlay.play();  
+    intervaloId = setInterval(contagemRegressiva, 1000)
+};
+
+
+function zerar() {
+    clearInterval(intervaloId) 
+    intervaloId = null
+};
+
+
+
+
