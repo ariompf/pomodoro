@@ -23,6 +23,8 @@ const botoes = document.querySelectorAll('.app__card-button');
 //Botão do Timer
 const iniciarBt = document.querySelector('.app__card-primary-button');
 const startPauseBt = document.querySelector('#start-pause');
+const iniciarOuPausarBt = document.querySelector('#start-pause span');
+const iconeBt = document.querySelector('.app__card-primary-butto-icon');
 
 
 
@@ -30,7 +32,8 @@ const startPauseBt = document.querySelector('#start-pause');
 const duracaoFoco = 1500000; 
 const duracaoDescansoCurto = 300000; 
 const duracaoDescansoLongo = 900000;
-let intervaloId = null
+tempoDecorridoEmSegundos = 5;
+let intervaloId = null;
 
 
 
@@ -93,32 +96,36 @@ function alterarContexto(contexto) {
 }
 
 const contagemRegressiva = () => {
-    if(tempoDecorridoEmSegundos <= 0) {
-        audioTempoFinalizado.play()  
-        alert('Tempo finalizado')
+    if(tempoDecorridoEmSegundos <= 0){
+        //audioTempoFinalizado.play()
+        alert('Tempo finalizado!')
         zerar()
         return
     }
     tempoDecorridoEmSegundos -= 1
-    console.log('Tempo: ' + tempoDecorridoEmSegundos)
-    console.log('Id: ' + intervaloId)
-};
+    console.log('Temporizador: ' + tempoDecorridoEmSegundos)
+}
 
-startPauseBt.addEventListener('click', iniciarOuPausar);
+startPauseBt.addEventListener('click', iniciarOuPausar)
 
 function iniciarOuPausar() {
     if (intervaloId) {
         audioPausa.play();  
         zerar()
-        return // early return -- circuit breaker
+        return
     }
     audioPlay.play();  
     intervaloId = setInterval(contagemRegressiva, 1000)
+    iniciarOuPausarBt.textContent = 'Pausar'
+    iconeBt.setAttribute('src', '/imagens/pause.png')
+
 };
 
 
 function zerar() {
     clearInterval(intervaloId) 
+    iniciarOuPausarBt.textContent = 'Começar'
+    iconeBt.setAttribute('src', 'imagens/play_arrow.png')
     intervaloId = null
 };
 
