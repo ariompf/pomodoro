@@ -3,6 +3,7 @@ const html = document.querySelector('html');
 const displayTempo = document.querySelector('#timer');
 const banner = document.querySelector('.app__image');
 const titulo = document.querySelector('.app__title');
+const tempoNaTela = document.querySelector('#timer');
 
 //Música e Audio
 const musicaFocoInput = document.querySelector('#alternar-musica');
@@ -29,10 +30,10 @@ const iconeBt = document.querySelector('.app__card-primary-butto-icon');
 
 
 //Valores do Timer
-const duracaoFoco = 1500000; 
-const duracaoDescansoCurto = 300000; 
-const duracaoDescansoLongo = 900000;
-tempoDecorridoEmSegundos = 5;
+const duracaoFoco = 1500; 
+const duracaoDescansoCurto = 300; 
+const duracaoDescansoLongo = 900;
+tempoDecorridoEmSegundos = 1500;
 let intervaloId = null;
 
 
@@ -47,21 +48,25 @@ musicaFocoInput.addEventListener('change', () => {
 
 
 focoBt.addEventListener('click', () => {
+    tempoDecorridoEmSegundos = 1500;
     alterarContexto('foco')
     focoBt.classList.add('active')
 });
 
 curtoBt.addEventListener('click', () => {
+    tempoDecorridoEmSegundos = 300;
     alterarContexto('descanso-curto')
     curtoBt.classList.add('active')
 });
 
 longoBt.addEventListener('click', () => {
+    tempoDecorridoEmSegundos = 900;
     alterarContexto('descanso-longo')
     longoBt.classList.add('active')
 });
 
 function alterarContexto(contexto) {
+    mostrarTempo()
     botoes.forEach(function(contexto) {
         contexto.classList.remove('active')
     })
@@ -97,13 +102,14 @@ function alterarContexto(contexto) {
 
 const contagemRegressiva = () => {
     if(tempoDecorridoEmSegundos <= 0){
-        //audioTempoFinalizado.play()
+        audioTempoFinalizado.play()
         alert('Tempo finalizado!')
         zerar()
         return
     }
     tempoDecorridoEmSegundos -= 1
-    console.log('Temporizador: ' + tempoDecorridoEmSegundos)
+    mostrarTempo()
+    //console.log('Temporizador: ' + tempoDecorridoEmSegundos)
 }
 
 startPauseBt.addEventListener('click', iniciarOuPausar)
@@ -130,5 +136,9 @@ function zerar() {
 };
 
 
-
-
+function mostrarTempo() {
+    const tempo = new Date(tempoDecorridoEmSegundos * 1000)
+    const tempoFormatado = tempo.toLocaleTimeString('pt-br', {minute: '2-digit', second: '2-digit'})
+    tempoNaTela.innerHTML = `${tempoFormatado}`
+};
+mostrarTempo();
